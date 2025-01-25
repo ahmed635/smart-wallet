@@ -103,10 +103,11 @@ public class ApplicationServiceImpl implements ApplicationService
 		}
 
 		AccountService accountService = AccountServiceImpl.getInstance();
-		if (accountService.loginAccount(new Account(name, password)))
+		Account account = new Account(name, password);
+		if (accountService.loginAccount(account))
 		{
 			System.out.println("Login Success");
-			services();
+			services(account);
 		}
 		else
 		{
@@ -114,23 +115,70 @@ public class ApplicationServiceImpl implements ApplicationService
 		}
 	}
 
-	private void services()
+	private void services(Account account)
 	{
-
-		System.out.println("1.Deposit   2.Withdraw    3.show details    4.Transfer    5. show balance   6.exit  7.logout");
 
 		// TODO create switch case such as on run function
 		// TODO every case on switch call function  don't forget (Invalid choose)
+		Scanner scanner = new Scanner(System.in);
+		boolean quit = false;
+		while (!quit)
+		{
+			System.out.println("1.Deposit   2.Withdraw    3.show details    4.Transfer    5. show balance   6.exit  7.logout");
+			System.out.println("Enter your choice");
+			int choice = scanner.nextInt();
+			switch (choice)
+			{
+			case 1:
+				deposit(account);
+				break;
+			case 2:
+				withdraw(account);
+				break;
+			case 3:
+				showDetails(account);
+				break;
+			case 4:
+				transfer(account);
+				break;
+			case 5:
+				showBalance(account);
+				break;
+			case 6:
+				quit = true;
+				System.out.println("you are welcome.");
+				break;
+			case 7:
+				System.out.println("You Logged out.");
+				break;
+			default:
+				System.out.println("Invalid Choice");
+			}
+			if (quit)
+			{
+				break;
+			}
+		}
 	}
 
 	// TODO create deposit function
 	void deposit(Account a)
 	{
-		// input int money
 		Scanner scanner = new Scanner(System.in);
-		double mo = scanner.nextDouble();
-		// TODO pls validate money >= 100 and <= 20000
-
+		double amount = scanner.nextDouble();
+		ValidationService validationService = new ValidationServiceImpl();
+		AccountService accountService = AccountServiceImpl.getInstance();
+		if (validationService.validateDeposit(amount))
+		{
+			if (!accountService.deposit(a, amount))
+				System.out.println("Deposit Failed");
+			else
+				System.out.println("Deposit Success");
+		}
+		else
+		{
+			System.out.println("Not Valid Amount");
+		}
 	}
 
 	// TODO create Withdraw function
@@ -142,7 +190,8 @@ public class ApplicationServiceImpl implements ApplicationService
 
 	void showDetails(Account a)
 	{
-
+		System.out.println("Account details");
+		System.out.println(a);
 	}
 
 	void transfer(Account withdrawAccount)
@@ -154,6 +203,6 @@ public class ApplicationServiceImpl implements ApplicationService
 
 	void showBalance(Account a)
 	{
-
+		System.out.println("Your Balance = " + a.getBalance());
 	}
 }
