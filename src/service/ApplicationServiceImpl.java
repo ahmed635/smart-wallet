@@ -6,6 +6,11 @@ import java.util.Scanner;
 
 public class ApplicationServiceImpl implements ApplicationService
 {
+	enum OperationType
+	{
+		WITHDRAW, DEPOSIT
+	}
+
 	@Override
 	public void run()
 	{
@@ -145,10 +150,11 @@ public class ApplicationServiceImpl implements ApplicationService
 				showBalance(account);
 				break;
 			case 6:
-				quit = true;
 				System.out.println("you are welcome.");
+				System.exit(0);
 				break;
 			case 7:
+				quit = true;
 				System.out.println("You Logged out.");
 				break;
 			default:
@@ -161,48 +167,81 @@ public class ApplicationServiceImpl implements ApplicationService
 		}
 	}
 
-	// TODO create deposit function
 	void deposit(Account a)
 	{
+		operation(a, OperationType.DEPOSIT);
+	}
+
+	void withdraw(Account a)
+	{
+		operation(a, OperationType.WITHDRAW);
+	}
+
+	private static void operation(Account a, OperationType type)
+	{
 		Scanner scanner = new Scanner(System.in);
+		System.out.printf("Enter your %s amount:%n", type.name().toLowerCase());
 		double amount = scanner.nextDouble();
 		ValidationService validationService = new ValidationServiceImpl();
 		AccountService accountService = AccountServiceImpl.getInstance();
-		if (validationService.validateDeposit(amount))
+		if (type == OperationType.DEPOSIT)
 		{
-			if (!accountService.deposit(a, amount))
-				System.out.println("Deposit Failed");
+			if (validationService.validateDeposit(amount))
+			{
+				if (!accountService.deposit(a, amount))
+					System.out.println("Deposit Failed");
+				else
+					System.out.println("Deposit Success");
+			}
 			else
-				System.out.println("Deposit Success");
+				System.out.println("Amount must be greater than 100 and less than 20000");
 		}
 		else
 		{
-			System.out.println("Not Valid Amount");
+			if (validationService.validateWithdraw(amount))
+			{
+				if (!accountService.withdraw(a, amount))
+					System.out.println("Withdraw Failed");
+				else
+					System.out.println("Withdraw Success");
+			}
+			else
+				System.out.println("Amount must be greater than 100 and less than 8000");
 		}
-	}
-
-	// TODO create Withdraw function
-	void withdraw(Account a)
-	{
-		// input int money
-		// TODO pls validate money >= 100 and <= 8000
 	}
 
 	void showDetails(Account a)
 	{
-		System.out.println("Account details");
-		System.out.println(a);
+		AccountService accountService = AccountServiceImpl.getInstance();
+		accountService.showDetails(a);
 	}
 
 	void transfer(Account withdrawAccount)
 	{
-		// TODO USER MUST give me user name of account that will transfer
-		// TODO input Account depositAccount
-		// TODO input int money
+		Scanner scanner = new Scanner(System.in);
+		System.out.println("Enter username of account to transfer: ");
+		String username = scanner.nextLine();
+		System.out.println("Enter amount of money: ");
+		double amount = Double.parseDouble(scanner.nextLine());
+		ValidationService validationService = new ValidationServiceImpl();
+		AccountService accountService = AccountServiceImpl.getInstance();
+		if (validationService.validateTransfer(amount))
+		{
+			if (accountService.transfer(withdrawAccount, username, amount))
+				System.out.println("Transfer Success");
+			else
+				System.out.println("Transfer Failed");
+		}
+		else
+		{
+			System.out.println("Amount of money must be greater than 0");
+		}
+
 	}
 
 	void showBalance(Account a)
 	{
-		System.out.println("Your Balance = " + a.getBalance());
+		AccountService accountService = AccountServiceImpl.getInstance();
+		accountService.showBalance(a);
 	}
 }

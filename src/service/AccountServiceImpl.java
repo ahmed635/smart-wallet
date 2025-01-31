@@ -44,15 +44,8 @@ public class AccountServiceImpl implements AccountService
 	@Override
 	public boolean deposit(Account account, double amount)
 	{
-		// TODO create function with name deposit that return
-		// TODO true if deposit success
-		// TODO false if deposit fail
-		// TODO check if account exist on wallet or not if not print account not exist
-		// TODO check if account is active or not  if not print account not active
-		// TODO make deposit
 		if (accountExistAndActive(account))
 		{
-			// TODO:: do deposit
 			if (account.getBalance() >= amount)
 			{
 				account.setBalance(account.getBalance() - amount);
@@ -60,7 +53,7 @@ public class AccountServiceImpl implements AccountService
 			}
 			else
 			{
-				System.out.println("Not enough balance");
+				System.out.printf("You have %.2f and try to deposit %.2f %n", account.getBalance(), amount);
 				return false;
 			}
 		}
@@ -82,27 +75,73 @@ public class AccountServiceImpl implements AccountService
 		return true;
 	}
 
-	// TODO without duplication
-	// TODO make withdraw
-	// TODO create function with name withdraw that return
-	// TODO true if withdraw success
-	// TODO false if withdraw fail
-	// TODO check if account exist on wallet or not if not print account not exist
-	// TODO check if account is active or not  if not print account not active
-	// TODO check if account balance is greater than  money if not print can't deposit because ....
-	// TODO make without
+	@Override
+	public boolean withdraw(Account account, double amount)
+	{
+		if (accountExistAndActive(account))
+		{
+			account.setBalance(account.getBalance() + amount);
+			return true;
+		}
+		return false;
+	}
 
-	// Transfer Account depositAccount, Account withdrawAccount, int money
-	// TODO without duplication
-	// TODO make Transfer
-	// TODO create function with name transfer that return
-	// TODO true if transfer success
-	// TODO false if transfer fail
-	// TODO check if depositAccount and withdrawAccount exist on wallet or not if not print account not exist
-	// TODO check if depositAccount and withdrawAccount is active or not  if not print account not active
-	// TODO check if withdrawAccount balance is greater than money if not print can't deposit because ....
+	public boolean transfer(Account withdrawAccount, String to, double amount)
+	{
+		Account depositAccount = findAccount(to);
+		if (accountExistAndActive(withdrawAccount) && validDepositAccount(depositAccount))
+		{
+			if (withdrawAccount.getBalance() >= amount)
+			{
+				withdrawAccount.setBalance(withdrawAccount.getBalance() - amount);
+				depositAccount.setBalance(depositAccount.getBalance() + amount);
+				return true;
+			}
+			else
+			{
+				System.out.println("You don't have sufficient funds");
+				return false;
+			}
+		}
+		return false;
+	}
 
-	// TODO SHOW Account Details
+	private boolean validDepositAccount(Account account)
+	{
+		if (account == null)
+		{
+			System.out.println("Deposit account does not exist");
+			return false;
+		}
+		else if (!account.getActive())
+		{
+			System.out.println("Deposit account is not active");
+			return false;
+		}
+		return true;
+	}
 
-	// TODO SHOW show Balance
+	private Account findAccount(String to)
+	{
+		return this.ewallet.getAccounts().stream().filter(acc -> acc.getUserName().equals(to)).findFirst().orElse(null);
+	}
+
+	@Override
+	public void showBalance(Account account)
+	{
+		if (isAccountExist(account))
+		{
+			System.out.printf("Your account balance is %.2f%n", account.getBalance());
+		}
+	}
+
+	@Override
+	public void showDetails(Account account)
+	{
+		if (isAccountExist(account))
+		{
+			System.out.println("Account details");
+			System.out.println(account);
+		}
+	}
 }
