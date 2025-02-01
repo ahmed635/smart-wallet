@@ -69,7 +69,7 @@ public class ApplicationServiceImpl implements ApplicationService
 			return;
 		}
 
-		AccountService accountService = AccountServiceImpl.getInstance();
+		AccountService accountService = new AccountServiceImpl();
 		Account account = new Account(name, password);
 		boolean isAccountCreated = accountService.createAccount(account);
 		if (isAccountCreated)
@@ -107,8 +107,8 @@ public class ApplicationServiceImpl implements ApplicationService
 			return;
 		}
 
-		AccountService accountService = AccountServiceImpl.getInstance();
-		Account account = new Account(name, password);
+		AccountService accountService = new AccountServiceImpl();
+		Account account = accountService.findAccount(name, password);
 		if (accountService.loginAccount(account))
 		{
 			System.out.println("Login Success");
@@ -122,9 +122,6 @@ public class ApplicationServiceImpl implements ApplicationService
 
 	private void services(Account account)
 	{
-
-		// TODO create switch case such as on run function
-		// TODO every case on switch call function  don't forget (Invalid choose)
 		Scanner scanner = new Scanner(System.in);
 		boolean quit = false;
 		while (!quit)
@@ -183,7 +180,7 @@ public class ApplicationServiceImpl implements ApplicationService
 		System.out.printf("Enter your %s amount:%n", type.name().toLowerCase());
 		double amount = scanner.nextDouble();
 		ValidationService validationService = new ValidationServiceImpl();
-		AccountService accountService = AccountServiceImpl.getInstance();
+		AccountService accountService = new AccountServiceImpl();
 		if (type == OperationType.DEPOSIT)
 		{
 			if (validationService.validateDeposit(amount))
@@ -212,7 +209,7 @@ public class ApplicationServiceImpl implements ApplicationService
 
 	void showDetails(Account a)
 	{
-		AccountService accountService = AccountServiceImpl.getInstance();
+		AccountService accountService = new AccountServiceImpl();
 		accountService.showDetails(a);
 	}
 
@@ -224,7 +221,7 @@ public class ApplicationServiceImpl implements ApplicationService
 		System.out.println("Enter amount of money: ");
 		double amount = Double.parseDouble(scanner.nextLine());
 		ValidationService validationService = new ValidationServiceImpl();
-		AccountService accountService = AccountServiceImpl.getInstance();
+		AccountService accountService = new AccountServiceImpl();
 		if (validationService.validateTransfer(amount))
 		{
 			if (accountService.transfer(withdrawAccount, username, amount))
@@ -241,7 +238,7 @@ public class ApplicationServiceImpl implements ApplicationService
 
 	void showBalance(Account a)
 	{
-		AccountService accountService = AccountServiceImpl.getInstance();
+		AccountService accountService = new AccountServiceImpl();
 		accountService.showBalance(a);
 	}
 }

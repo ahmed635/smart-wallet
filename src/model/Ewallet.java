@@ -1,31 +1,43 @@
 package model;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
+public class Ewallet
+{
+	private static Ewallet instance;
 
-// pls apply singleton
-public class Ewallet {
+	private String name = "EraaSoft Cash";
 
+	private List<Account> accounts = new ArrayList<>();
 
-    private String name = "EraaSoft Cash";
+	private Ewallet()
+	{
+	}
 
-    private List<Account> accounts = new ArrayList<>();
+	public static Ewallet getInstance()
+	{
+		if (instance == null)
+			instance = new Ewallet();
+		return instance;
+	}
 
+	public String getName()
+	{
+		return name;
+	}
 
-    public String getName() {
-        return name;
-    }
+	public void setName(String name)
+	{
+		this.name = name;
+	}
 
-    public void setName(String name) {
-        this.name = name;
-    }
+	public List<Account> getAccounts()
+	{
+		return accounts;
+	}
 
-    public List<Account> getAccounts() {
-        return accounts;
-    }
-
-    public void setAccounts(List<Account> accounts) {
-        this.accounts = accounts;
-    }
+	public void setAccounts(List<Account> accounts)
+	{
+		this.accounts = accounts;
+	}
 }

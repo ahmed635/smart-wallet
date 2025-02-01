@@ -18,7 +18,6 @@ public class Account
 	{
 		this.userName = userName;
 		this.password = password;
-		this.balance = 0;
 		this.active = true;
 	}
 
@@ -81,6 +80,6 @@ public class Account
 	@Override
 	public String toString()
 	{
-		return "username: %10s, balance: %.2f, active: %b%n".formatted(userName, balance, active);
+		return "username: %5s, balance: %.2f, active: %b%n".formatted(userName, balance, active);
 	}
 }

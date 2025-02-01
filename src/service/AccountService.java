@@ -18,4 +18,6 @@ public interface AccountService
 	void showBalance(Account account);
 
 	void showDetails(Account account);
+
+	Account findAccount(String name, String password);
 }

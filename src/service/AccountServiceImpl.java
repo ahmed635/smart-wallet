@@ -5,21 +5,7 @@ import model.*;
 public class AccountServiceImpl implements AccountService
 {
 
-	private Ewallet ewallet = new Ewallet();
-	private static AccountServiceImpl accountService;
-
-	private AccountServiceImpl()
-	{
-	}
-
-	public static AccountServiceImpl getInstance()
-	{
-		if (accountService == null)
-		{
-			accountService = new AccountServiceImpl();
-		}
-		return accountService;
-	}
+	private Ewallet ewallet = Ewallet.getInstance();
 
 	@Override
 	public boolean createAccount(Account account)
@@ -86,15 +72,15 @@ public class AccountServiceImpl implements AccountService
 		return false;
 	}
 
-	public boolean transfer(Account withdrawAccount, String to, double amount)
+	public boolean transfer(Account fromAccount, String username, double amount)
 	{
-		Account depositAccount = findAccount(to);
-		if (accountExistAndActive(withdrawAccount) && validDepositAccount(depositAccount))
+		Account toAccount = findAccount(username);
+		if (accountExistAndActive(fromAccount) && validDepositAccount(toAccount))
 		{
-			if (withdrawAccount.getBalance() >= amount)
+			if (fromAccount.getBalance() >= amount)
 			{
-				withdrawAccount.setBalance(withdrawAccount.getBalance() - amount);
-				depositAccount.setBalance(depositAccount.getBalance() + amount);
+				fromAccount.setBalance(fromAccount.getBalance() - amount);
+				toAccount.setBalance(toAccount.getBalance() + amount);
 				return true;
 			}
 			else
@@ -143,5 +129,12 @@ public class AccountServiceImpl implements AccountService
 			System.out.println("Account details");
 			System.out.println(account);
 		}
+	}
+
+	@Override
+	public Account findAccount(String username, String password)
+	{
+		return ewallet.getAccounts().stream().filter(account -> account.getUserName().equals(username) && account.getPassword().equals(password))
+				.findFirst().orElse(null);
 	}
 }
